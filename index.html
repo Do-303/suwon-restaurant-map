@@ -598,6 +598,12 @@
       #splash *, #splash::before, #splash::after { animation-duration: .01s !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; }
     }
 
+
+    /* =========================================================
+       🏷 앱 이름 '수맛지': 수·맛·지는 크게, 원·집·도는 작게 (작은 글자도 보이게)
+       ========================================================= */
+    h1 .t-big { font-size: 1em; color: inherit !important; }
+    h1 .t-small { font-size: .6em; color: inherit !important; opacity: .85; margin-left: .03em; }
   </style>
 </head>
 <body>
@@ -876,7 +882,7 @@
     </svg>
 
     <div class="title">
-      <h1>수원 맛집 지도</h1>
+      <h1 aria-label="수원 맛집 지도"><span class="t-big">수</span><span class="t-small">원</span> <span class="t-big">맛</span><span class="t-small">집</span> <span class="t-big">지</span><span class="t-small">도</span></h1>
       <p>正祖의 도시 · 水原</p>
     </div>
     <div class="hint">화면을 누르면 지도로 들어가오</div>
@@ -890,7 +896,7 @@
       <div class="brand">
         <svg class="brand-icon" viewBox="0 0 64 64"><use href="#icon-jeongjo"/></svg>
         <div class="brand-text">
-          <h1>수원 맛집 지도</h1>
+          <h1 aria-label="수원 맛집 지도"><span class="t-big">수</span><span class="t-small">원</span> <span class="t-big">맛</span><span class="t-small">집</span> <span class="t-big">지</span><span class="t-small">도</span></h1>
           <span class="brand-sub">정조의 도시<span class="hanja">水原華城</span></span>
         </div>
         <span class="seal">水<br>原</span>
@@ -908,7 +914,7 @@
       <div class="brand">
         <svg class="brand-icon" viewBox="0 0 64 64"><use href="#icon-jeongjo"/></svg>
         <div class="brand-text">
-          <h1>수원 <span>맛집</span> 지도</h1>
+          <h1 aria-label="수원 맛집 지도"><span class="t-big">수</span><span class="t-small">원</span> <span class="t-big">맛</span><span class="t-small">집</span> <span class="t-big">지</span><span class="t-small">도</span></h1>
           <span class="brand-sub">정조의 도시<span class="hanja">水原華城</span></span>
         </div>
       </div>
