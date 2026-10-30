@@ -271,6 +271,92 @@
     .fbtn:hover { background: var(--hover); }
     .fbtn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
 
+    /* 헤더 오른쪽 버튼 묶음 (리스트 추가 · API 키 변경) */
+    .header-actions { display: flex; align-items: center; gap: 14px; }
+
+    /* 🏠 토박이 맛집 집 아이콘 (빨간 집 + 베이지 지붕) */
+    .house { width: 14px; height: 14px; vertical-align: -2px; }
+    .badge.local { background: #f6efe4; color: #8f2f28; }
+    .badge.progress { background: rgba(0,0,0,.06); color: #555; }
+
+    /* ---------- 🏘 수원 사람 추천 창 (모달) ---------- */
+    .cm-overlay {
+      position: fixed; inset: 0; z-index: 50;
+      background: rgba(0, 0, 0, 0.35);
+      display: flex; align-items: center; justify-content: center;
+      padding: 16px;
+    }
+    .cm-overlay[hidden] { display: none; }
+    .cm-card {
+      width: 100%; max-width: 440px; max-height: 86vh; overflow-y: auto;
+      background-color: var(--bg); background-image: var(--paper);
+      border-radius: 14px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.2);
+      padding: 18px 20px 20px;
+    }
+    .cm-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .cm-head h2 { margin: 0; font-size: 18px; }
+    .cm-close, .cm-back { border: 0; background: none; font-size: 22px; line-height: 1; cursor: pointer; color: var(--sub); padding: 4px; }
+    .cm-back { font-size: 14px; margin-right: 6px; }
+    .cm-intro { font-size: 13px; color: #555; line-height: 1.6; margin: 0 0 14px; }
+    .cm-step {
+      display: flex; align-items: center; gap: 12px;
+      width: 100%; text-align: left;
+      background: rgba(255,255,255,.75);
+      border: 1px solid var(--line); border-radius: 12px;
+      padding: 13px 14px; margin-bottom: 8px;
+      font-size: 14px; color: var(--text); cursor: pointer;
+    }
+    .cm-step:hover:not(:disabled) { border-color: #111; }
+    .cm-step:disabled { cursor: not-allowed; opacity: .45; }
+    .cm-step .num {
+      width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: #111; color: #fff; font-size: 13px; font-weight: 700;
+    }
+    .cm-step .num.done { background: #fff; color: #111; border: 1.5px solid #111; }
+    .cm-step .txt { flex: 1; }
+    .cm-step .txt small { display: block; color: var(--sub); font-size: 12px; margin-top: 2px; }
+    .cm-btn {
+      padding: 9px 14px; border-radius: 10px;
+      border: 1px solid #ccc; background: #fff; color: var(--text);
+      font-size: 14px; cursor: pointer;
+    }
+    .cm-btn:hover:not(:disabled) { background: var(--hover); }
+    .cm-btn.primary { background: #111; border-color: #111; color: #fff; }
+    .cm-btn.primary:hover:not(:disabled) { background: #444; }
+    .cm-btn:disabled { opacity: .4; cursor: not-allowed; }
+    .cm-btn.wide { width: 100%; margin-top: 10px; }
+    .cm-row { display: flex; gap: 8px; }
+    .cm-row input[type=text] {
+      flex: 1; padding: 10px 12px; border: 1px solid #ccc; border-radius: 10px; font-size: 14px; background: #fff;
+    }
+    .cm-msg { font-size: 13px; line-height: 1.6; margin: 10px 0 0; color: #555; }
+    .cm-msg.ok { color: #111; font-weight: 600; }
+    .cm-msg.err { color: #8f2f28; }
+    .cm-note { font-size: 11.5px; color: var(--sub); line-height: 1.55; margin-top: 10px; }
+    .cm-item {
+      background: rgba(255,255,255,.75); border: 1px solid var(--line); border-radius: 12px;
+      padding: 12px 14px; margin-bottom: 8px;
+    }
+    .cm-item .name { font-weight: 600; font-size: 15px; }
+    .cm-item .addr { font-size: 12px; color: var(--sub); margin: 2px 0 8px; }
+    .cm-bar { height: 6px; background: rgba(0,0,0,.08); border-radius: 99px; overflow: hidden; }
+    .cm-bar span { display: block; height: 100%; background: #111; border-radius: 99px; }
+    .cm-bar.full span { background: #b33a32; }
+    .cm-count { font-size: 12px; color: #555; margin: 5px 0 8px; display: flex; justify-content: space-between; }
+    .cm-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .cm-actions .cm-btn { padding: 6px 10px; font-size: 13px; }
+    .cm-demo { font-size: 11.5px; color: var(--sub); border: 0; background: none; text-decoration: underline; cursor: pointer; padding: 6px 4px; }
+    .cm-result { display: block; width: 100%; text-align: left; margin-bottom: 6px; }
+    .cm-result small { display: block; color: var(--sub); font-size: 12px; }
+    .cm-receipt-preview { max-width: 100%; max-height: 220px; border-radius: 10px; margin-top: 10px; border: 1px solid var(--line); display: block; }
+    .cm-file { display: block; margin-top: 10px; font-size: 13px; }
+    .cm-tools { border-top: 1px dashed #ccc; margin-top: 14px; padding-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+    .cm-tools span { font-size: 11.5px; color: var(--sub); }
+    .cm-celebrate { text-align: center; padding: 10px 0; }
+    .cm-celebrate .house { width: 54px; height: 54px; }
+
     /* 정보창 안 토박이 추천 버튼 */
     .info .local-btn {
       margin-top: 8px;
@@ -388,7 +474,10 @@
           <span class="brand-sub">정조의 도시<span class="hanja">水原華城</span></span>
         </div>
       </div>
-      <button class="link-btn" id="reset-key">API 키 변경</button>
+      <div class="header-actions">
+        <button class="link-btn" id="open-community">리스트 추가</button>
+        <button class="link-btn" id="reset-key">API 키 변경</button>
+      </div>
     </header>
 
     <div class="chips" id="chips">
@@ -427,7 +516,7 @@
       <button class="fbtn icon-only" data-grade="blue"  id="f-blue"  title="별점은 낮지만 리뷰 많은 곳만 보기" aria-label="별점은 낮지만 리뷰 많은 곳만 보기"></button>
       <span class="sep"></span>
       <button class="fbtn" id="f-open">🕐 영업 중</button>
-      <button class="fbtn" id="f-local">🏠 토박이 추천</button>
+      <button class="fbtn" id="f-local" title="수원 사람 20명 이상이 추천한 수원 토박이 맛집만 보기">토박이 추천</button>
       <button class="fbtn" id="f-nofr" title="이름으로 알려진 체인점을 숨겨요">프랜차이즈 제외</button>
     </div>
 
@@ -437,6 +526,20 @@
         <div id="list-title">식당을 불러오는 중...</div>
         <div id="list"></div>
       </div>
+    </div>
+  </div>
+
+  <!-- 🏘 수원 사람 추천 창 (리스트 추가 버튼을 누르면 열림) -->
+  <div class="cm-overlay" id="cm-overlay" hidden>
+    <div class="cm-card" role="dialog" aria-modal="true" aria-labelledby="cm-title">
+      <div class="cm-head">
+        <div style="display:flex;align-items:center">
+          <button class="cm-back" id="cm-back" hidden>← 처음으로</button>
+          <h2 id="cm-title">수원 사람 추천 맛집</h2>
+        </div>
+        <button class="cm-close" id="cm-close" aria-label="닫기">×</button>
+      </div>
+      <div id="cm-body"></div>
     </div>
   </div>
 
@@ -536,36 +639,74 @@
     let landmarkMarker = null;
 
     /* =========================================================
-       🏠 수원 토박이 추천 목록
-       - 방법 1) 아래 LOCAL_PICKS에 가게 이름을 직접 적기
-                 (이름의 일부만 적어도 돼요. 예: "OO칼국수")
-       - 방법 2) 앱에서 핀을 누르고 [🏠 토박이 추천으로 표시] 버튼 누르기
-                 (이 브라우저에 저장돼요)
+       🏠 수원 토박이 맛집
+       - 수원 사람 인증을 한 사람 20명 이상이 추천하면 '토박이 맛집'으로 선정
+       - 별점·리뷰 수와 상관없이, 진짜 동네 사람들이 가는 곳을 모으는 게 목적
+       - ⚠️ 시연용 프로토타입: 추천 기록은 이 브라우저에만 저장돼요
+         (여러 사람이 함께 쓰려면 Firebase 같은 서버가 필요해요)
+       - LOCAL_PICKS에 가게 이름을 적으면 추천 수와 상관없이 바로 토박이 맛집으로 표시
        ========================================================= */
     const LOCAL_PICKS = [
       // "가게 이름 1",
-      // "가게 이름 2",
     ];
+    const NEED_RECOMMENDS = 20;              // 토박이 맛집 선정 기준 (추천 수)
+    const COMMUNITY_KEY = "suwon_community_v1";
 
-    function getSavedLocalIds() {
-      try { return JSON.parse(localStorage.getItem("local_picks") || "[]"); } catch (e) { return []; }
+    // 수원시 대략적인 범위 (위도·경도 네모 칸) - 위치 인증에 사용
+    const SUWON_BOUNDS = { south: 37.215, north: 37.335, west: 126.925, east: 127.090 };
+
+    // 🏠 빨간 집 + 베이지 지붕 아이콘
+    const HOUSE_SVG =
+      '<svg class="house" viewBox="0 0 16 16" aria-hidden="true">' +
+        '<rect x="3.2" y="7.3" width="9.6" height="6.9" fill="#b33a32"/>' +
+        '<rect x="6.8" y="10" width="2.4" height="4.2" fill="#ead8b6"/>' +
+        '<path d="M1.2 7.8L8 1.8l6.8 6z" fill="#ead8b6" stroke="#8a6a48" stroke-width=".8" stroke-linejoin="round"/>' +
+      "</svg>";
+
+    function loadCommunity() {
+      try {
+        const d = JSON.parse(localStorage.getItem(COMMUNITY_KEY) || "null");
+        if (d && d.places) return d;
+      } catch (e) {}
+      return { verified: null, places: {} };
     }
-    function setSavedLocalIds(ids) {
-      try { localStorage.setItem("local_picks", JSON.stringify(ids)); } catch (e) {}
+    function saveCommunity(d) {
+      try { localStorage.setItem(COMMUNITY_KEY, JSON.stringify(d)); } catch (e) {}
     }
-    function isLocalPick(place) {
-      if (getSavedLocalIds().includes(place.id)) return true;
-      const name = place.displayName || "";
-      return LOCAL_PICKS.some((pick) => pick && name.includes(pick));
+    let community = loadCommunity();
+
+    const latOf = (loc) => (typeof loc.lat === "function" ? loc.lat() : loc.lat);
+    const lngOf = (loc) => (typeof loc.lng === "function" ? loc.lng() : loc.lng);
+
+    function isSelected(id) {
+      const c = community.places[id];
+      return !!c && c.count >= NEED_RECOMMENDS;
     }
     function isInCodeList(place) {
       const name = place.displayName || "";
       return LOCAL_PICKS.some((pick) => pick && name.includes(pick));
     }
-    function toggleSavedLocal(place) {
-      let ids = getSavedLocalIds();
-      ids = ids.includes(place.id) ? ids.filter((x) => x !== place.id) : ids.concat(place.id);
-      setSavedLocalIds(ids);
+    // 토박이 맛집인지 (20명 이상 추천 또는 코드 목록)
+    function isLocalPick(place) {
+      return isSelected(place.id) || isInCodeList(place);
+    }
+    // 추천 목록에 저장된 가게를 지도·목록에서 쓰는 모양으로 바꿈
+    function communityToP(c) {
+      const place = {
+        id: c.id, displayName: c.name, location: { lat: c.lat, lng: c.lng },
+        rating: c.rating, userRatingCount: c.reviews,
+        formattedAddress: c.address, googleMapsURI: c.mapsUrl,
+      };
+      return { place: place, grade: getGrade(place), openNow: undefined, fromCommunity: true };
+    }
+    // Google 장소 → 추천 목록에 저장할 정보
+    function placeToCommunity(place) {
+      return {
+        id: place.id, name: place.displayName, address: place.formattedAddress || "",
+        lat: latOf(place.location), lng: lngOf(place.location),
+        rating: place.rating || null, reviews: place.userRatingCount || 0,
+        mapsUrl: place.googleMapsURI || "", count: 0, mine: false, addedAt: Date.now(),
+      };
     }
 
     /* =========================================================
@@ -593,10 +734,11 @@
     const CHECK_INNER = (c) =>
       '<path d="M9.8 10l2.2 2.2 4.2-4.2" fill="none" stroke="' + c + '" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>';
 
-    // 토박이 추천 핀: 오른쪽 위에 검정 집 모양 배지
+    // 토박이 맛집 핀: 오른쪽 위에 빨간 집 + 베이지 지붕 배지
     const HOUSE_BADGE =
-      '<circle cx="20" cy="5.5" r="5" fill="#111" stroke="#fff" stroke-width="1"/>' +
-      '<path d="M17.4 6.2L20 3.8l2.6 2.4V8.4h-5.2z" fill="#fff"/>';
+      '<circle cx="20" cy="5.6" r="5.4" fill="#fff" stroke="#b33a32" stroke-width="1"/>' +
+      '<rect x="17.5" y="5.9" width="5" height="3.4" fill="#b33a32"/>' +
+      '<path d="M16.4 6.3L20 3l3.6 3.3z" fill="#ead8b6" stroke="#8a6a48" stroke-width=".5" stroke-linejoin="round"/>';
 
     const LANDMARK_ICON = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(
       '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 46">' +
@@ -663,6 +805,14 @@
     document.getElementById("key-input").addEventListener("keydown", (e) => {
       if (e.key === "Enter") document.getElementById("key-submit").click();
     });
+    document.getElementById("open-community").addEventListener("click", () => openCommunity("home"));
+    document.getElementById("cm-close").addEventListener("click", closeCommunity);
+    document.getElementById("cm-back").addEventListener("click", () => openCommunity("home"));
+    document.getElementById("cm-overlay").addEventListener("click", (e) => {
+      if (e.target.id === "cm-overlay") closeCommunity();
+    });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeCommunity(); });
+
     document.getElementById("reset-key").addEventListener("click", () => {
       clearKey();
       location.reload();
@@ -736,6 +886,7 @@
         e.currentTarget.classList.toggle("active", filterOpen);
         render();
       });
+      document.getElementById("f-local").innerHTML = HOUSE_SVG + " 토박이 추천";
       document.getElementById("f-local").addEventListener("click", (e) => {
         filterLocal = !filterLocal;
         e.currentTarget.classList.toggle("active", filterLocal);
@@ -865,18 +1016,38 @@
 
     /* ---------- 필터를 적용해서 지도·목록 다시 그리기 ---------- */
     function render() {
+      community = loadCommunity();   // 다른 탭에서 바뀐 추천 기록도 반영
+      shownIds = new Set();
+      renderList();
+      drawCommunityMarkers();   // 선정된 토박이 맛집은 검색 결과와 상관없이 지도에 항상 표시
+    }
+
+    let shownIds = new Set();      // 지금 목록에 나온 가게 id
+    let focusCommunityId = null;   // 추천 목록에서 '지도에서 보기'로 고른 가게
+
+    function renderList() {
       const listTitle = document.getElementById("list-title");
       const list = document.getElementById("list");
       list.innerHTML = "";
       clearMarkers();
 
-      if (allPlaces.length === 0) {
+      // '토박이 추천' 필터를 켜면, 선정된 토박이 맛집을 검색 결과에 함께 넣음
+      let base = allPlaces;
+      if (filterLocal) {
+        const ids = new Set(allPlaces.map((p) => p.place.id));
+        const extra = Object.values(community.places)
+          .filter((c) => c.count >= NEED_RECOMMENDS && !ids.has(c.id))
+          .map(communityToP);
+        base = allPlaces.concat(extra);
+      }
+
+      if (base.length === 0) {
         listTitle.textContent = "검색 결과 0곳";
         list.innerHTML = '<div class="empty">이 근처에 해당하는 식당이 없어요.<br>지도를 옮기고 다시 검색해 보세요.</div>';
         return;
       }
 
-      const shown = allPlaces.filter((p) => {
+      const shown = base.filter((p) => {
         if (filterGrade !== "all" && p.grade !== filterGrade) return false;
         if (filterOpen && p.openNow !== true) return false;
         if (filterLocal && !isLocalPick(p.place)) return false;
@@ -890,7 +1061,7 @@
         ? "수원 명물 '" + currentSearch.label + "' " + allPlaces.length + "곳"
         : "반경 " + (SEARCH_RADIUS / 1000) + "km 안 " + allPlaces.length + "곳 (인기순)";
       listTitle.textContent = isFiltered
-        ? "찾은 " + allPlaces.length + "곳 중 " + shown.length + "곳 보는 중"
+        ? "찾은 " + base.length + "곳 중 " + shown.length + "곳 보는 중"
         : baseTitle;
 
       if (shown.length === 0) {
@@ -904,6 +1075,7 @@
       const place = p.place;
       const grade = p.grade;
       const local = isLocalPick(place);
+      shownIds.add(place.id);
 
       // 별점 등급에 맞는 색깔 핀 (토박이 추천이면 집 모양 배지 + 조금 크게)
       const size = local ? 44 : grade === "gray" ? 28 : 38;
@@ -933,12 +1105,12 @@
         : "평점 없음";
       item.innerHTML =
         '<div class="place-name">' + (index + 1) + ". " + escapeHtml(place.displayName) +
-          (local ? '<span class="badge local">🏠 토박이 추천</span>' : "") +
+          (local ? '<span class="badge local">' + HOUSE_SVG + " 토박이 맛집</span>" : "") +
           (grade !== "gray"
             ? '<span class="badge ' + grade + '"><img src="' + GRADES[grade].icon + '" alt="">' + GRADES[grade].label + "</span>"
             : "") +
         "</div>" +
-        '<div class="place-meta">' + rating + " · " + openText(p.openNow, true) +
+        '<div class="place-meta">' + rating + " · " + openText(p.openNow, true) + progressBadge(place.id) +
           "<br>" + escapeHtml(place.formattedAddress || "") + "</div>";
       item.addEventListener("click", () => selectPlace(p, marker, index));
       document.getElementById("list").appendChild(item);
@@ -966,27 +1138,30 @@
         "<p>" + escapeHtml(place.formattedAddress || "") + "</p>" +
         (place.googleMapsURI ? '<a href="' + place.googleMapsURI + '" target="_blank" rel="noopener">구글 지도에서 보기 →</a><br>' : "");
 
-      // 🏠 토박이 추천 표시/해제 버튼
-      const localBtn = document.createElement("button");
-      localBtn.className = "local-btn";
-      const paint = () => {
-        const on = isLocalPick(place);
-        localBtn.classList.toggle("on", on);
-        localBtn.textContent = on ? "🏠 토박이 추천 ✓ (누르면 해제)" : "🏠 토박이 추천으로 표시";
-      };
-      paint();
-      if (isInCodeList(place)) {
-        localBtn.disabled = true;
-        localBtn.title = "코드의 LOCAL_PICKS 목록에 있는 가게예요";
+      // 🏘 수원 사람 추천 현황 + 추천하기 버튼
+      const c = community.places[place.id];
+      const status = document.createElement("p");
+      if (isLocalPick(place)) {
+        status.innerHTML = '<b style="color:#8f2f28">' + HOUSE_SVG + " 수원 토박이 맛집</b>" +
+          (c ? " · 수원 사람 " + c.count + "명 추천" : "");
+      } else {
+        status.textContent = "수원 사람 추천 " + (c ? c.count : 0) + " / " + NEED_RECOMMENDS;
       }
-      localBtn.addEventListener("click", () => {
-        toggleSavedLocal(place);
-        render();
-        // 다시 그린 뒤 같은 가게를 찾아 정보창을 다시 열어 줌
-        const again = markers.find((m) => m.getTitle() === place.displayName);
-        if (again) google.maps.event.trigger(again, "click");
-      });
-      box.appendChild(localBtn);
+      box.appendChild(status);
+
+      const recBtn = document.createElement("button");
+      recBtn.className = "local-btn";
+      if (c && c.mine) {
+        recBtn.textContent = "✓ 내가 추천한 곳";
+        recBtn.classList.add("on");
+        recBtn.disabled = true;
+      } else {
+        recBtn.textContent = "수원 사람으로 추천하기";
+        recBtn.addEventListener("click", () => {
+          openCommunity("receipt", { mode: c ? "recommend" : "add", item: c || placeToCommunity(place) });
+        });
+      }
+      box.appendChild(recBtn);
 
       infoWindow.setContent(box);
       infoWindow.open({ map: map, anchor: marker });
@@ -1054,6 +1229,323 @@
         '<p style="color:#999">주변 식당을 함께 보여드리고 있어요</p></div>'
       );
       infoWindow.open({ map: map, anchor: landmarkMarker });
+    }
+
+    /* ---------- 🏠 토박이 맛집 마커 (검색 결과에 없어도 항상 표시) ---------- */
+    let communityMarkers = [];
+    function drawCommunityMarkers() {
+      communityMarkers.forEach((m) => m.setMap(null));
+      communityMarkers = [];
+      if (!map || !MarkerClass) return;
+      Object.values(community.places).forEach((c) => {
+        const selected = c.count >= NEED_RECOMMENDS;
+        if (shownIds.has(c.id)) return;                       // 이미 목록에 핀이 있으면 생략
+        if (!selected && c.id !== focusCommunityId) return;    // 미선정 가게는 '지도에서 보기'로 고른 것만
+        const p = communityToP(c);
+        const g = p.grade;
+        const inner = ({ red: CIRCLE, green: (x) => CIRCLE(x) + CHECK_BADGE(x), blue: CHECK_INNER, gray: CIRCLE })[g](GRADES[g].color);
+        const size = selected ? 44 : 38;
+        const marker = new MarkerClass({
+          map: map,
+          position: { lat: c.lat, lng: c.lng },
+          title: c.name,
+          icon: {
+            url: pinSvg(GRADES[g].color, inner + (selected ? HOUSE_BADGE : "")),
+            scaledSize: new google.maps.Size(size, size),
+            anchor: new google.maps.Point(size / 2, size * 0.9),
+          },
+          zIndex: 20,
+        });
+        marker.addListener("click", () => selectPlace(p, marker, -1));
+        communityMarkers.push(marker);
+      });
+    }
+
+    function progressBadge(id) {
+      const c = community.places[id];
+      if (!c || c.count >= NEED_RECOMMENDS) return "";
+      return ' <span class="badge progress" style="margin-left:0">수원 사람 추천 ' + c.count + "/" + NEED_RECOMMENDS + "</span>";
+    }
+
+    /* =========================================================
+       🏘 수원 사람 추천 창
+       처음 화면: ① 수원 사람 인증 → ② 다른 사람 추천 식당 확인 / ③ 내 맛집 추가
+       추천·추가는 모두 영수증 확인을 거쳐야 버튼이 눌려요
+       ========================================================= */
+    const cmBody = () => document.getElementById("cm-body");
+
+    function openCommunity(view, data) {
+      community = loadCommunity();
+      document.getElementById("cm-overlay").hidden = false;
+      document.getElementById("cm-back").hidden = view === "home";
+      if (view === "home") viewHome();
+      else if (view === "verify") viewVerify();
+      else if (view === "list") viewList();
+      else if (view === "add") viewAdd();
+      else if (view === "receipt") viewReceipt(data);
+    }
+    function closeCommunity() {
+      document.getElementById("cm-overlay").hidden = true;
+    }
+    function setTitle(t) { document.getElementById("cm-title").textContent = t; }
+
+    function needVerify() {
+      if (community.verified) return false;
+      setTitle("수원 사람 인증이 필요해요");
+      cmBody().innerHTML =
+        '<p class="cm-intro">추천하거나 맛집을 추가하려면 먼저 수원 사람 인증을 해 주세요.</p>' +
+        '<button class="cm-btn primary wide" id="cm-go-verify">수원 사람 인증하기</button>';
+      document.getElementById("cm-go-verify").onclick = () => openCommunity("verify");
+      return true;
+    }
+
+    // ---------- 처음 화면 ----------
+    function viewHome() {
+      setTitle("수원 사람 추천 맛집");
+      const v = community.verified;
+      const total = Object.keys(community.places).length;
+      const selected = Object.values(community.places).filter((c) => c.count >= NEED_RECOMMENDS).length;
+      cmBody().innerHTML =
+        '<p class="cm-intro">별점·리뷰 수와 상관없이, <b>수원 사람들이 진짜 가는 곳</b>을 함께 모아요.<br>' +
+        "수원 사람 " + NEED_RECOMMENDS + "명의 추천을 받으면 " + HOUSE_SVG + " <b>수원 토박이 맛집</b>으로 선정돼요.</p>" +
+        '<button class="cm-step" id="cm-s1"><span class="num' + (v ? " done" : "") + '">' + (v ? "✓" : "1") + "</span>" +
+          '<span class="txt">수원 사람 인증하기<small>' +
+          (v ? "인증 완료" + (v.demo ? " (시연)" : "") + " · " + new Date(v.at).toLocaleDateString("ko-KR") : "현재 위치로 수원에 계신지 확인해요") +
+          "</small></span></button>" +
+        '<button class="cm-step" id="cm-s2"' + (v ? "" : " disabled") + '><span class="num">2</span>' +
+          '<span class="txt">다른 사람 추천 식당 확인하기<small>추천 중 ' + total + "곳 · 토박이 맛집 " + selected + "곳</small></span></button>" +
+        '<button class="cm-step" id="cm-s3"' + (v ? "" : " disabled") + '><span class="num">3</span>' +
+          '<span class="txt">내 맛집 추가하기<small>영수증 확인 후 추천할 수 있어요</small></span></button>' +
+        '<div class="cm-tools"><span>시연 도구</span>' +
+          (v ? "" : '<button class="cm-demo" id="cm-demo-verify">수원 위치로 인증(시연)</button>') +
+          '<button class="cm-demo" id="cm-demo-reset">추천 기록 초기화</button></div>';
+      document.getElementById("cm-s1").onclick = () => openCommunity("verify");
+      document.getElementById("cm-s2").onclick = () => openCommunity("list");
+      document.getElementById("cm-s3").onclick = () => openCommunity("add");
+      const dv = document.getElementById("cm-demo-verify");
+      if (dv) dv.onclick = () => { community.verified = { at: Date.now(), demo: true }; saveCommunity(community); viewHome(); };
+      document.getElementById("cm-demo-reset").onclick = () => {
+        if (!confirm("이 브라우저에 저장된 인증과 추천 기록을 모두 지울까요?")) return;
+        community = { verified: null, places: {} };
+        saveCommunity(community); render(); viewHome();
+      };
+    }
+
+    // ---------- ① 수원 사람 인증 (위치) ----------
+    function viewVerify() {
+      setTitle("수원 사람 인증");
+      const v = community.verified;
+      cmBody().innerHTML =
+        '<p class="cm-intro">지금 계신 위치가 <b>수원시 안</b>인지 확인해요.<br>(동네 인증처럼 위치 정보만 잠깐 사용하고 저장하지 않아요)</p>' +
+        (v ? '<p class="cm-msg ok">✓ 이미 인증했어요 (' + new Date(v.at).toLocaleDateString("ko-KR") + ")</p>" : "") +
+        '<button class="cm-btn primary wide" id="cm-locate">📍 내 위치로 인증하기</button>' +
+        '<p class="cm-msg" id="cm-vmsg"></p>';
+      document.getElementById("cm-locate").onclick = () => {
+        const msg = document.getElementById("cm-vmsg");
+        if (!navigator.geolocation) {
+          msg.className = "cm-msg err";
+          msg.textContent = "이 브라우저는 위치 기능을 지원하지 않아요. 처음 화면의 '수원 위치로 인증(시연)'을 써 주세요.";
+          return;
+        }
+        msg.className = "cm-msg"; msg.textContent = "위치를 확인하는 중...";
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const { latitude: la, longitude: lo } = pos.coords;
+            const inside = la >= SUWON_BOUNDS.south && la <= SUWON_BOUNDS.north &&
+                           lo >= SUWON_BOUNDS.west && lo <= SUWON_BOUNDS.east;
+            if (inside) {
+              community.verified = { at: Date.now(), demo: false };
+              saveCommunity(community);
+              msg.className = "cm-msg ok";
+              msg.innerHTML = "✓ 수원 사람 인증 완료! 이제 추천할 수 있어요.";
+              setTimeout(() => openCommunity("home"), 900);
+            } else {
+              msg.className = "cm-msg err";
+              msg.textContent = "지금 위치가 수원시 밖으로 확인돼요. 수원에 있을 때 다시 시도해 주세요.";
+            }
+          },
+          () => {
+            msg.className = "cm-msg err";
+            msg.textContent = "위치를 가져오지 못했어요. 브라우저에서 위치 권한을 허용해 주세요. (파일로 직접 열면 막힐 수 있어요)";
+          },
+          { timeout: 10000 }
+        );
+      };
+    }
+
+    // ---------- ② 다른 사람 추천 식당 ----------
+    function viewList() {
+      if (needVerify()) return;
+      setTitle("수원 사람 추천 식당");
+      const items = Object.values(community.places).sort((a, b) => b.count - a.count);
+      if (items.length === 0) {
+        cmBody().innerHTML =
+          '<p class="cm-intro">아직 추천된 식당이 없어요.<br>첫 번째로 내 맛집을 추가해 보세요!</p>' +
+          '<button class="cm-btn primary wide" id="cm-go-add">내 맛집 추가하기</button>';
+        document.getElementById("cm-go-add").onclick = () => openCommunity("add");
+        return;
+      }
+      cmBody().innerHTML = '<p class="cm-intro">추천 ' + NEED_RECOMMENDS + "개를 채우면 토박이 맛집으로 선정돼요.</p>";
+      items.forEach((c) => {
+        const full = c.count >= NEED_RECOMMENDS;
+        const el = document.createElement("div");
+        el.className = "cm-item";
+        el.innerHTML =
+          '<div class="name">' + escapeHtml(c.name) + (full ? ' <span class="badge local">' + HOUSE_SVG + " 토박이 맛집</span>" : "") + "</div>" +
+          '<div class="addr">' + escapeHtml(c.address) + "</div>" +
+          '<div class="cm-bar' + (full ? " full" : "") + '"><span style="width:' + Math.min(100, c.count / NEED_RECOMMENDS * 100) + '%"></span></div>' +
+          '<div class="cm-count"><span>수원 사람 추천 <b>' + c.count + "</b> / " + NEED_RECOMMENDS + "</span>" +
+            "<span>" + (full ? "선정 완료" : NEED_RECOMMENDS - c.count + "명 더 필요") + "</span></div>" +
+          '<div class="cm-actions"></div>';
+        const actions = el.querySelector(".cm-actions");
+
+        const rec = document.createElement("button");
+        rec.className = "cm-btn" + (c.mine ? "" : " primary");
+        rec.textContent = c.mine ? "✓ 추천 완료" : "영수증 확인하고 추천하기";
+        rec.disabled = !!c.mine;
+        rec.onclick = () => openCommunity("receipt", { mode: "recommend", item: c });
+
+        const see = document.createElement("button");
+        see.className = "cm-btn";
+        see.textContent = "지도에서 보기";
+        see.onclick = () => showOnMap(c);
+
+        const demo = document.createElement("button");
+        demo.className = "cm-demo";
+        demo.textContent = "+19 (시연)";
+        demo.title = "다른 수원 사람들이 추천한 상황을 흉내 내요";
+        demo.onclick = () => {
+          community.places[c.id].count += 19;
+          saveCommunity(community); render(); viewList();
+        };
+
+        actions.append(rec, see);
+        if (!full) actions.append(demo);
+        cmBody().appendChild(el);
+      });
+    }
+
+    function showOnMap(c) {
+      closeCommunity();
+      focusCommunityId = c.id;
+      render();
+      map.setCenter({ lat: c.lat, lng: c.lng });
+      map.setZoom(17);
+      const m = markers.concat(communityMarkers).find((mk) => mk.getTitle() === c.name);
+      if (m) google.maps.event.trigger(m, "click");
+    }
+
+    // ---------- ③ 내 맛집 추가 (가게 찾기) ----------
+    function viewAdd() {
+      if (needVerify()) return;
+      setTitle("내 맛집 추가하기");
+      cmBody().innerHTML =
+        '<p class="cm-intro">수원 사람만 아는 단골집을 찾아 주세요.<br>별점이나 리뷰가 적어도 괜찮아요.</p>' +
+        '<div class="cm-row"><input type="text" id="cm-q" placeholder="가게 이름 (예: OO칼국수 매탄동)">' +
+        '<button class="cm-btn primary" id="cm-search">찾기</button></div>' +
+        '<div id="cm-results" style="margin-top:10px"></div>';
+      const run = async () => {
+        const q = document.getElementById("cm-q").value.trim();
+        const box = document.getElementById("cm-results");
+        if (!q) return;
+        if (!PlaceClass) { box.innerHTML = '<p class="cm-msg err">지도가 열린 뒤에 검색할 수 있어요.</p>'; return; }
+        box.innerHTML = '<p class="cm-msg">찾는 중...</p>';
+        try {
+          const { places } = await PlaceClass.searchByText({
+            textQuery: q,
+            fields: ["id", "displayName", "location", "rating", "userRatingCount", "formattedAddress", "googleMapsURI"],
+            locationBias: { center: SUWON_CENTER, radius: 15000 },
+            maxResultCount: 6, language: "ko", region: "kr",
+          });
+          box.innerHTML = "";
+          if (!places || !places.length) { box.innerHTML = '<p class="cm-msg">검색 결과가 없어요. 동네 이름을 함께 적어 보세요.</p>'; return; }
+          places.forEach((pl) => {
+            const b = document.createElement("button");
+            b.className = "cm-btn cm-result";
+            const exist = community.places[pl.id];
+            b.innerHTML = "<b>" + escapeHtml(pl.displayName) + "</b>" +
+              "<small>" + escapeHtml(pl.formattedAddress || "") + (exist ? " · 이미 추천 " + exist.count + "명" : "") + "</small>";
+            b.onclick = () => openCommunity("receipt", exist
+              ? { mode: "recommend", item: exist }
+              : { mode: "add", item: placeToCommunity(pl) });
+            box.appendChild(b);
+          });
+        } catch (e) {
+          console.error(e);
+          box.innerHTML = '<p class="cm-msg err">검색에 실패했어요. 잠시 후 다시 시도해 주세요.</p>';
+        }
+      };
+      document.getElementById("cm-search").onclick = run;
+      document.getElementById("cm-q").addEventListener("keydown", (e) => { if (e.key === "Enter") run(); });
+    }
+
+    // ---------- 영수증 확인 → 추천 ----------
+    function viewReceipt(data) {
+      if (needVerify()) return;
+      const item = data.item;
+      if (item.mine) { viewList(); return; }
+      setTitle("영수증 확인");
+      cmBody().innerHTML =
+        '<p class="cm-intro"><b>' + escapeHtml(item.name) + "</b><br>" + escapeHtml(item.address) + "</p>" +
+        '<p class="cm-intro" style="margin-bottom:0">이 가게에서 받은 <b>영수증 사진</b>을 올려 주세요.</p>' +
+        '<input class="cm-file" type="file" id="cm-file" accept="image/*">' +
+        '<img class="cm-receipt-preview" id="cm-preview" alt="영수증 미리보기" hidden>' +
+        '<button class="cm-btn wide" id="cm-check" disabled>영수증 확인하기</button>' +
+        '<p class="cm-msg" id="cm-rmsg"></p>' +
+        '<button class="cm-btn primary wide" id="cm-submit" disabled>' +
+          (data.mode === "add" ? "내 맛집으로 추가하고 추천하기" : "이 식당 추천하기") + "</button>" +
+        '<p class="cm-note">※ 시연용 프로토타입이라 사진을 올리면 확인 완료로 처리해요.<br>' +
+        "실제 서비스에서는 영수증의 가게 이름·날짜를 검토한 뒤 승인해요. 사진은 저장하지 않아요.</p>";
+
+      const file = document.getElementById("cm-file");
+      const check = document.getElementById("cm-check");
+      const submit = document.getElementById("cm-submit");
+      const msg = document.getElementById("cm-rmsg");
+      file.onchange = () => {
+        const f = file.files && file.files[0];
+        if (!f) return;
+        const prev = document.getElementById("cm-preview");
+        prev.src = URL.createObjectURL(f);
+        prev.hidden = false;
+        check.disabled = false;
+        submit.disabled = true;
+        msg.className = "cm-msg"; msg.textContent = "";
+      };
+      check.onclick = () => {
+        check.disabled = true;
+        msg.className = "cm-msg"; msg.textContent = "영수증을 확인하는 중...";
+        setTimeout(() => {
+          msg.className = "cm-msg ok";
+          msg.textContent = "✓ 영수증 확인 완료! 이제 추천할 수 있어요.";
+          submit.disabled = false;   // 영수증 확인 후에만 추천 버튼이 눌림
+        }, 1200);
+      };
+      submit.onclick = () => {
+        const saved = community.places[item.id] || item;
+        const before = saved.count;
+        saved.count = before + 1;
+        saved.mine = true;
+        community.places[item.id] = saved;
+        saveCommunity(community);
+        render();
+        viewDone(saved, before < NEED_RECOMMENDS && saved.count >= NEED_RECOMMENDS);
+      };
+    }
+
+    function viewDone(c, justSelected) {
+      setTitle(justSelected ? "토박이 맛집 선정!" : "추천 완료");
+      cmBody().innerHTML =
+        '<div class="cm-celebrate">' + (justSelected ? HOUSE_SVG : "") +
+        '<p class="cm-intro" style="margin-top:10px"><b>' + escapeHtml(c.name) + "</b><br>" +
+        (justSelected
+          ? "수원 사람 " + c.count + "명의 추천으로<br><b>수원 토박이 맛집</b>으로 선정됐어요! 🎉"
+          : "추천했어요! 지금 " + c.count + " / " + NEED_RECOMMENDS +
+            (c.count >= NEED_RECOMMENDS ? " (토박이 맛집)" : " · " + (NEED_RECOMMENDS - c.count) + "명 더 필요해요")) +
+        "</p></div>" +
+        '<div class="cm-row"><button class="cm-btn" id="cm-d-list" style="flex:1">추천 식당 보기</button>' +
+        '<button class="cm-btn primary" id="cm-d-map" style="flex:1">지도에서 보기</button></div>';
+      document.getElementById("cm-d-list").onclick = () => openCommunity("list");
+      document.getElementById("cm-d-map").onclick = () => showOnMap(c);
     }
 
     function clearMarkers() {
