@@ -1,5 +1,11 @@
 # 🏯 수원 맛집 지도
 
+> 🏙 **design/suwon-city-app 브랜치**: 수원시 시정 VI 가이드(2022.09)의 전용색상(Royal Blue2 · Smart Blue · Nature Green)과
+> 지정서체(KoPubWorld 돋움체 · Roboto)를 적용한 '수원시 앱 느낌' 디자인 버전이에요.
+> 수원특례시 공식 서비스가 아닌 개인 포트폴리오 프로젝트이며, 워드마크·시 심벌은 사용하지 않았어요.
+> 한글 글꼴은 한국출판인회의(kopus.org)에서 KoPubWorld 돋움체_Pro를 받아
+> `fonts/KoPubWorldDotumPro-Light.otf`, `-Medium.otf`, `-Bold.otf` 이름으로 넣으면 적용돼요. (없으면 Noto Sans KR로 보여요)
+
 정조의 도시, 수원(水原華城) 근처 식당을 지도에서 찾아보는 웹 앱이에요.
 Google Maps JavaScript API의 Geolocation 예제를 바탕으로 만들었어요.
 
