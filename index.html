@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<!--
+  수원 맛집 지도
+  Google Maps JavaScript API 예제(Geolocation)를 바탕으로 만든 식당 찾기 앱
+-->
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>수원 맛집 지도</title>
+  <!-- 브라우저 탭 아이콘도 성문 모양 -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none' stroke='%23111' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.5 11.5c2.2.2 4-.6 5.6-1.8L16 4.5l7.9 5.2c1.6 1.2 3.4 2 5.6 1.8M7 11.2h18M9.5 11.2v7M22.5 11.2v7M4 18.5h24V28H4zM13 28v-3.5a3 3 0 0 1 6 0V28'/%3E%3C/svg%3E" />
+  <style>
+    /* =========================================================
+       ✍️ 글씨체: 조선100년체
+       - 이 HTML 파일과 같은 폴더에 있는 ChosunCentennial.otf 파일을 불러옴
+         (브라우저가 컴퓨터에 설치된 글꼴을 막는 경우가 있어서 파일을 직접 연결)
+       ========================================================= */
+    @font-face {
+      font-family: "Chosun100";
+      src: url("ChosunCentennial.otf") format("opentype"),
+           local("ChosunCentennial"), local("Chosun Centennial"), local("조선100년체");
+      font-display: swap;
+    }
+
+    /* 🎨 색상: 흰색 · 회색 · 검정 (핀 색깔만 예외) */
+    :root {
+      --primary: #111111;      /* 검정: 주요 버튼, 선택된 칩 */
+      --primary-dark: #444444; /* 진한 회색: 버튼에 마우스 올렸을 때 */
+      --text: #111111;
+      --sub: #808080;          /* 회색: 보조 글씨 */
+      --line: #e5e5e5;         /* 연회색: 구분선 */
+      --bg: #f5f5f5;           /* 아주 연한 회색: 배경 */
+      --hover: #f0f0f0;
+      --font: "Chosun100", "조선100년체", "ChosunCentennial", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    button, input { font-family: var(--font); }
+    .gm-style, .gm-style .gm-style-iw { font-family: var(--font) !important; } /* 지도 정보창 글씨도 */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font);
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    /* ---------- API 키 입력 화면 ---------- */
+    #key-screen {
+      position: fixed; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--bg);
+      z-index: 10;
+      padding: 16px;
+    }
+    .key-card {
+      width: 100%; max-width: 400px;
+      background: #fff;
+      border-radius: 16px;
+      padding: 28px 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .key-card h1 { margin: 0 0 6px; font-size: 22px; }
+    .key-card p { margin: 0 0 20px; color: var(--sub); font-size: 14px; line-height: 1.5; }
+    .key-card input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 15px;
+      margin-bottom: 12px;
+    }
+    .key-card input:focus { outline: 2px solid var(--primary); border-color: transparent; }
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: 0;
+      border-radius: 10px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn:hover { background: var(--primary-dark); }
+
+    /* ---------- 앱 화면 ---------- */
+    #app { display: none; height: 100%; flex-direction: column; }
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px 19px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+    }
+    header h1 { margin: 0; font-size: 18px; }
+    header h1 span { color: var(--sub); }
+
+    /* =========================================================
+       🏯 정조의 도시 · 수원화성 느낌 (색은 흰·회·검 그대로)
+       ========================================================= */
+    /* 성곽 여장(성벽 위 凸凹 모양) 무늬 – 헤더 아래 테두리 */
+    header { position: relative; border-bottom: 0; }
+    header::after {
+      content: "";
+      position: absolute; left: 0; right: 0; bottom: 0;
+      height: 7px;
+      background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7'%3E%3Cpath d='M0 7h12V4H9V0H3v4H0z' fill='%23dddddd'/%3E%3C/svg%3E") repeat-x bottom;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand-icon { width: 30px; height: 30px; flex-shrink: 0; color: var(--text); }
+    .brand-text { display: flex; flex-direction: column; line-height: 1.25; }
+    .brand-sub {
+      font-size: 11px;
+      color: var(--sub);
+      letter-spacing: 0.18em;
+    }
+    .brand-sub .hanja { letter-spacing: 0.3em; margin-left: 4px; }
+    .chips { padding-top: 10px; } /* 여장 무늬 자리만큼 살짝 띄움 */
+
+    /* 낙관(도장) 모양 – 붉은색 대신 검정 테두리로 절제 */
+    .seal {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 34px; height: 34px;
+      border: 1.5px solid var(--text);
+      border-radius: 3px;
+      font-size: 11px; line-height: 1.05;
+      text-align: center;
+      letter-spacing: 0;
+      color: var(--text);
+    }
+
+    /* 키 입력 화면 배경: 한옥 창살(문살) 무늬를 아주 옅게 */
+    #key-screen {
+      background-color: var(--bg);
+      background-image:
+        linear-gradient(#ebebeb 1px, transparent 1px),
+        linear-gradient(90deg, #ebebeb 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+    .key-card { position: relative; overflow: hidden; }
+    .key-card .brand { margin-bottom: 14px; }
+    .key-card .brand-icon { width: 44px; height: 44px; }
+    .key-card .seal { margin-left: auto; }
+    .key-card h1 { font-size: 22px; margin: 0; }
+    /* 카드 아래쪽 성곽 무늬 */
+    .key-card::after {
+      content: "";
+      position: absolute; left: 0; right: 0; bottom: 0;
+      height: 8px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='8'%3E%3Cpath d='M0 8V4h5V0h8v4h5v4z' fill='%23eeeeee'/%3E%3C/svg%3E") repeat-x bottom;
+    }
+    .link-btn {
+      border: 0; background: none; color: var(--sub);
+      font-size: 13px; cursor: pointer; text-decoration: underline;
+    }
+
+    /* 카테고리 칩 */
+    .chips {
+      display: flex; gap: 8px;
+      padding: 10px 16px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      overflow-x: auto;
+    }
+    .chip {
+      flex-shrink: 0;
+      padding: 7px 14px;
+      border: 1px solid #ddd;
+      border-radius: 999px;
+      background: #fff;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .chip.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+    .main { flex: 1; display: flex; min-height: 0; }
+    #map { flex: 1; height: 100%; }
+
+    /* 식당 목록 */
+    #list-panel {
+      width: 340px;
+      background: #fff;
+      border-left: 1px solid var(--line);
+      overflow-y: auto;
+    }
+    #list-title { padding: 14px 16px 8px; font-size: 14px; color: var(--sub); }
+    .place {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      cursor: pointer;
+    }
+    .place:hover { background: var(--hover); }
+    .place.selected { background: var(--hover); box-shadow: inset 3px 0 0 var(--primary); }
+    .place-name { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+    .place-meta { font-size: 13px; color: var(--sub); line-height: 1.5; }
+    .star { color: var(--text); }
+    .empty { padding: 24px 16px; color: var(--sub); font-size: 14px; text-align: center; }
+
+    /* 지도 위 버튼 (예제의 custom-map-control-button 스타일 응용) */
+    .custom-map-control-button {
+      background-color: #fff;
+      border: 0;
+      border-radius: 20px;
+      box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.3);
+      margin: 10px 4px;
+      padding: 0 1em;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      height: 40px;
+      cursor: pointer;
+    }
+    .custom-map-control-button:hover { background: var(--hover); }
+    .custom-map-control-button.primary { background: var(--primary); color: #fff; }
+    .custom-map-control-button.primary:hover { background: var(--primary-dark); }
+
+    /* 등급 배지 (목록) */
+    .badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 11px; font-weight: 700;
+      padding: 2px 7px; border-radius: 999px;
+      margin-left: 6px; vertical-align: 2px;
+    }
+    .badge img { width: 12px; height: 12px; }
+    .badge.red   { background: #fdecec; color: #e5484d; }
+    .badge.green { background: #e8f6ec; color: #2ba84a; }
+    .badge.blue  { background: #eeeefe; color: #6563e8; }
+
+    .badge.local { background: #111; color: #fff; }
+    .badge.open   { background: #f0f0f0; color: #111; }
+    .badge.closed { background: #f0f0f0; color: #999; }
+
+    /* 보기 필터 줄 (색깔별 모아보기 · 영업 중 · 토박이 추천) */
+    .filters {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 16px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      overflow-x: auto;
+      font-size: 13px;
+    }
+    .filters .label { color: var(--sub); flex-shrink: 0; margin-right: 2px; }
+    .filters .sep { width: 1px; height: 18px; background: var(--line); flex-shrink: 0; margin: 0 6px; }
+    .fbtn {
+      flex-shrink: 0;
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 5px 11px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .fbtn img { width: 15px; height: 15px; }
+    .fbtn.icon-only { padding: 4px 9px; }
+    .fbtn.icon-only img { width: 20px; height: 20px; }
+    .fbtn.icon-only.active img { filter: drop-shadow(0 0 0 #fff); }
+    .fbtn:hover { background: var(--hover); }
+    .fbtn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+    /* 정보창 안 토박이 추천 버튼 */
+    .info .local-btn {
+      margin-top: 8px;
+      padding: 6px 10px;
+      border: 1px solid #111;
+      border-radius: 8px;
+      background: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .info .local-btn.on { background: #111; color: #fff; }
+
+    /* 범례 (지도 왼쪽 아래) */
+    .legend {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px -1px rgba(0,0,0,.3);
+      margin: 10px;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.9;
+    }
+    .legend div { display: flex; align-items: center; gap: 6px; }
+    .legend img { width: 18px; height: 18px; }
+
+    /* 정보창 */
+    .info h3 { margin: 0 0 4px; font-size: 15px; }
+    .info p { margin: 2px 0; font-size: 13px; color: #555; }
+    .info a { color: var(--primary); font-size: 13px; font-weight: 600; }
+
+    /* 모바일: 지도 위, 목록 아래 */
+    @media (max-width: 720px) {
+      .main { flex-direction: column; }
+      #map { flex: none; height: 55%; }
+      #list-panel { width: 100%; flex: 1; border-left: 0; border-top: 1px solid var(--line); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 🏯 수원화성 성문 아이콘 (지붕 처마 + 누각 + 성벽 + 아치형 문). 한 번 그려두고 여러 곳에서 재사용 -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="icon-hwaseong" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 11.5c2.2.2 4-.6 5.6-1.8L16 4.5l7.9 5.2c1.6 1.2 3.4 2 5.6 1.8"/>
+      <path d="M7 11.2h18"/>
+      <path d="M9.5 11.2v7M22.5 11.2v7M16 11.2v7"/>
+      <path d="M9.5 15h13"/>
+      <path d="M4 18.5h24V28H4z"/>
+      <path d="M13 28v-3.5a3 3 0 0 1 6 0V28"/>
+      <path d="M4 18.5v-1.6h2.4v1.6M25.6 18.5v-1.6H28v1.6"/>
+    </symbol>
+  </svg>
+
+  <!-- 1) API 키 입력 화면 -->
+  <div id="key-screen">
+    <div class="key-card">
+      <div class="brand">
+        <svg class="brand-icon"><use href="#icon-hwaseong"/></svg>
+        <div class="brand-text">
+          <h1>수원 맛집 지도</h1>
+          <span class="brand-sub">정조의 도시<span class="hanja">水原華城</span></span>
+        </div>
+        <span class="seal">水<br>原</span>
+      </div>
+      <p>Google Maps API 키를 입력하면 지도가 열립니다.<br />
+         (Maps JavaScript API와 Places API (New)가 켜져 있어야 해요)</p>
+      <input id="key-input" type="text" placeholder="API 키를 입력하세요 (AIza...)" autocomplete="off" />
+      <button class="btn" id="key-submit">지도 열기</button>
+    </div>
+  </div>
+
+  <!-- 2) 앱 화면 -->
+  <div id="app">
+    <header>
+      <div class="brand">
+        <svg class="brand-icon"><use href="#icon-hwaseong"/></svg>
+        <div class="brand-text">
+          <h1>수원 <span>맛집</span> 지도</h1>
+          <span class="brand-sub">정조의 도시<span class="hanja">水原華城</span></span>
+        </div>
+      </div>
+      <button class="link-btn" id="reset-key">API 키 변경</button>
+    </header>
+
+    <div class="chips" id="chips">
+      <button class="chip active" data-type="restaurant">전체</button>
+      <button class="chip" data-type="korean_restaurant">한식</button>
+      <button class="chip" data-type="chinese_restaurant">중식</button>
+      <button class="chip" data-type="japanese_restaurant">일식</button>
+      <!-- 해외 음식: data-type에 여러 종류를 쉼표(,)로 묶어서 한 번에 검색 -->
+      <button class="chip" data-type="italian_restaurant,french_restaurant,american_restaurant,spanish_restaurant,steak_house,pizza_restaurant,hamburger_restaurant">양식</button>
+      <button class="chip" data-type="thai_restaurant,vietnamese_restaurant,indian_restaurant,indonesian_restaurant,asian_restaurant">아시안</button>
+      <button class="chip" data-type="mexican_restaurant,turkish_restaurant,greek_restaurant,mediterranean_restaurant,middle_eastern_restaurant,lebanese_restaurant,brazilian_restaurant,afghani_restaurant">기타 해외</button>
+      <button class="chip" data-type="bar,pub,wine_bar,bar_and_grill">술집</button>
+      <button class="chip" data-type="cafe">카페</button>
+      <button class="chip" data-type="bakery">베이커리</button>
+    </div>
+
+    <!-- 보기 필터: 검색을 다시 하지 않고, 이미 찾은 식당 중에서 골라 보여줌 -->
+    <div class="filters" id="filters">
+      <span class="label">보기</span>
+      <button class="fbtn active" data-grade="all">전체</button>
+      <!-- 핀 아이콘만 보이는 버튼 (마우스를 올리면 설명이 떠요) -->
+      <button class="fbtn icon-only" data-grade="red"   id="f-red"   title="별점 4.5 이상만 보기"        aria-label="별점 4.5 이상만 보기"></button>
+      <button class="fbtn icon-only" data-grade="green" id="f-green" title="별점 4.0 ~ 4.4만 보기"       aria-label="별점 4.0 ~ 4.4만 보기"></button>
+      <button class="fbtn icon-only" data-grade="blue"  id="f-blue"  title="별점은 낮지만 리뷰 많은 곳만 보기" aria-label="별점은 낮지만 리뷰 많은 곳만 보기"></button>
+      <span class="sep"></span>
+      <button class="fbtn" id="f-open">🕐 영업 중</button>
+      <button class="fbtn" id="f-local">🏠 토박이 추천</button>
+    </div>
+
+    <div class="main">
+      <div id="map"></div>
+      <div id="list-panel">
+        <div id="list-title">식당을 불러오는 중...</div>
+        <div id="list"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================
+       🔑 API 키 넣는 곳
+       - 여기에 키를 직접 넣으면 입력 화면 없이 바로 지도가 열립니다.
+       - 비워두면 화면에서 입력받습니다.
+       ========================================================= */
+    const API_KEY = "";
+
+    // 수원역 근처를 기본 중심으로 사용
+    const SUWON_CENTER = { lat: 37.2664, lng: 127.0001 };
+    const SEARCH_RADIUS = 1500; // 검색 반경(미터)
+
+    /* =========================================================
+       🎨 지도 스타일 (JavaScript Style Array)
+       - 흰 바탕 + 회색 도로 + 연한 청록색 물
+       - 가게(poi)·대중교통(transit) 아이콘은 숨겨서 우리 마커만 보이게 함
+       ========================================================= */
+    const MAP_STYLE = [
+      { featureType: "all", elementType: "geometry.fill", stylers: [{ weight: "2.00" }] },
+      { featureType: "all", elementType: "geometry.stroke", stylers: [{ color: "#9c9c9c" }] },
+      { featureType: "all", elementType: "labels.text", stylers: [{ visibility: "on" }] },
+      { featureType: "landscape", elementType: "all", stylers: [{ color: "#f2f2f2" }] },
+      { featureType: "landscape", elementType: "geometry.fill", stylers: [{ color: "#ffffff" }] },
+      { featureType: "landscape.man_made", elementType: "geometry.fill", stylers: [{ color: "#ffffff" }] },
+      { featureType: "poi", elementType: "all", stylers: [{ visibility: "off" }] },
+      { featureType: "road", elementType: "all", stylers: [{ saturation: -100 }, { lightness: 45 }] },
+      { featureType: "road", elementType: "geometry.fill", stylers: [{ color: "#eeeeee" }] },
+      { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#7b7b7b" }] },
+      { featureType: "road", elementType: "labels.text.stroke", stylers: [{ color: "#ffffff" }] },
+      { featureType: "road.highway", elementType: "all", stylers: [{ visibility: "simplified" }] },
+      { featureType: "road.arterial", elementType: "labels.icon", stylers: [{ visibility: "off" }] },
+      { featureType: "transit", elementType: "all", stylers: [{ visibility: "off" }] },
+      { featureType: "water", elementType: "all", stylers: [{ color: "#46bcec" }, { visibility: "on" }] },
+      { featureType: "water", elementType: "geometry.fill", stylers: [{ color: "#c8d7d4" }] },
+      { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#070707" }] },
+      { featureType: "water", elementType: "labels.text.stroke", stylers: [{ color: "#ffffff" }] },
+    ];
+
+    let map, infoWindow;
+    let markers = [];
+    let currentType = ["restaurant"]; // 지금 검색 중인 종류 (여러 개 가능)
+    let PlaceClass, MarkerClass;
+
+    let allPlaces = [];                // 마지막으로 검색한 식당 전체
+    let filterGrade = "all";           // "all" | "red" | "green" | "blue"
+    let filterOpen = false;            // 영업 중만 보기
+    let filterLocal = false;           // 토박이 추천만 보기
+
+    /* =========================================================
+       🏠 수원 토박이 추천 목록
+       - 방법 1) 아래 LOCAL_PICKS에 가게 이름을 직접 적기
+                 (이름의 일부만 적어도 돼요. 예: "OO칼국수")
+       - 방법 2) 앱에서 핀을 누르고 [🏠 토박이 추천으로 표시] 버튼 누르기
+                 (이 브라우저에 저장돼요)
+       ========================================================= */
+    const LOCAL_PICKS = [
+      // "가게 이름 1",
+      // "가게 이름 2",
+    ];
+
+    function getSavedLocalIds() {
+      try { return JSON.parse(localStorage.getItem("local_picks") || "[]"); } catch (e) { return []; }
+    }
+    function setSavedLocalIds(ids) {
+      try { localStorage.setItem("local_picks", JSON.stringify(ids)); } catch (e) {}
+    }
+    function isLocalPick(place) {
+      if (getSavedLocalIds().includes(place.id)) return true;
+      const name = place.displayName || "";
+      return LOCAL_PICKS.some((pick) => pick && name.includes(pick));
+    }
+    function isInCodeList(place) {
+      const name = place.displayName || "";
+      return LOCAL_PICKS.some((pick) => pick && name.includes(pick));
+    }
+    function toggleSavedLocal(place) {
+      let ids = getSavedLocalIds();
+      ids = ids.includes(place.id) ? ids.filter((x) => x !== place.id) : ids.concat(place.id);
+      setSavedLocalIds(ids);
+    }
+
+    /* =========================================================
+       📍 별점 등급별 핀
+       - 빨강: 별점 4.5 이상
+       - 초록: 별점 4.0 ~ 4.4
+       - 파랑: 별점 4.0 미만이지만 리뷰가 많은 곳 (MANY_REVIEWS개 이상)
+       - 회색: 그 외
+       ========================================================= */
+    const MANY_REVIEWS = 100; // "리뷰가 많다"의 기준 (원하는 숫자로 바꿔도 돼요)
+
+    const PIN_BODY = "M13 2.5C8.86 2.5 5.5 5.86 5.5 10c0 5.6 7.5 13.5 7.5 13.5s7.5-7.9 7.5-13.5c0-4.14-3.36-7.5-7.5-7.5z";
+    function pinSvg(color, inner) {
+      return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 26">' +
+          '<path d="' + PIN_BODY + '" fill="#fff" stroke="' + color + '" stroke-width="2.4" stroke-linejoin="round"/>' +
+          inner +
+        "</svg>"
+      );
+    }
+    const CIRCLE = (c) => '<circle cx="13" cy="10" r="2.8" fill="none" stroke="' + c + '" stroke-width="2.4"/>';
+    const CHECK_BADGE = (c) =>
+      '<circle cx="19.5" cy="20" r="4.6" fill="#fff"/>' +
+      '<path d="M17 20l1.8 1.8 3.4-3.4" fill="none" stroke="' + c + '" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>';
+    const CHECK_INNER = (c) =>
+      '<path d="M9.8 10l2.2 2.2 4.2-4.2" fill="none" stroke="' + c + '" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>';
+
+    // 토박이 추천 핀: 오른쪽 위에 검정 집 모양 배지
+    const HOUSE_BADGE =
+      '<circle cx="20" cy="5.5" r="5" fill="#111" stroke="#fff" stroke-width="1"/>' +
+      '<path d="M17.4 6.2L20 3.8l2.6 2.4V8.4h-5.2z" fill="#fff"/>';
+
+    const GRADES = {
+      red:   { label: "별점 4.5 이상",        color: "#e5484d", icon: pinSvg("#e5484d", CIRCLE("#e5484d")) },
+      green: { label: "별점 4.0 ~ 4.4",       color: "#2ba84a", icon: pinSvg("#2ba84a", CIRCLE("#2ba84a") + CHECK_BADGE("#2ba84a")) },
+      blue:  { label: "별점은 낮지만 리뷰 많음", color: "#6563e8", icon: pinSvg("#6563e8", CHECK_INNER("#6563e8")) },
+      gray:  { label: "그 외",                 color: "#aaaaaa", icon: pinSvg("#aaaaaa", CIRCLE("#aaaaaa")) },
+    };
+
+    // 식당의 별점·리뷰 수를 보고 등급을 정하는 함수
+    function getGrade(place) {
+      const rating = place.rating || 0;
+      const reviews = place.userRatingCount || 0;
+      if (rating >= 4.5) return "red";
+      if (rating >= 4.0) return "green";
+      if (reviews >= MANY_REVIEWS) return "blue";
+      return "gray";
+    }
+
+    /* ---------- 키 입력 처리 ---------- */
+    function getSavedKey() {
+      try { return localStorage.getItem("gmaps_key") || ""; } catch (e) { return ""; }
+    }
+    function saveKey(k) {
+      try { localStorage.setItem("gmaps_key", k); } catch (e) {}
+    }
+    function clearKey() {
+      try { localStorage.removeItem("gmaps_key"); } catch (e) {}
+    }
+
+    function loadGoogleMaps(key) {
+      const script = document.createElement("script");
+      script.src =
+        "https://maps.googleapis.com/maps/api/js?key=" + encodeURIComponent(key) +
+        "&callback=initMap&v=weekly&loading=async&language=ko&region=KR";
+      script.async = true;
+      script.onerror = () => alert("지도를 불러오지 못했어요. 인터넷 연결이나 API 키를 확인해 주세요.");
+      document.head.appendChild(script);
+
+      document.getElementById("key-screen").style.display = "none";
+      document.getElementById("app").style.display = "flex";
+    }
+
+    // 키가 잘못됐을 때 Google이 부르는 함수
+    window.gm_authFailure = function () {
+      alert("API 키가 올바르지 않거나 권한이 없어요. 키를 다시 입력해 주세요.");
+      clearKey();
+      location.reload();
+    };
+
+    document.getElementById("key-submit").addEventListener("click", () => {
+      const key = document.getElementById("key-input").value.trim();
+      if (!key) { alert("API 키를 입력해 주세요."); return; }
+      saveKey(key);
+      loadGoogleMaps(key);
+    });
+    document.getElementById("key-input").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") document.getElementById("key-submit").click();
+    });
+    document.getElementById("reset-key").addEventListener("click", () => {
+      clearKey();
+      location.reload();
+    });
+
+    // 시작: 코드에 키가 있거나 저장된 키가 있으면 바로 로드
+    const startKey = API_KEY || getSavedKey();
+    if (startKey) loadGoogleMaps(startKey);
+
+    /* ---------- 지도 초기화 ---------- */
+    async function initMap() {
+      const { Map, InfoWindow } = await google.maps.importLibrary("maps");
+      const { Marker } = await google.maps.importLibrary("marker");
+      const { Place } = await google.maps.importLibrary("places");
+      PlaceClass = Place;
+      MarkerClass = Marker;
+
+      map = new Map(document.getElementById("map"), {
+        center: SUWON_CENTER,
+        zoom: 15,
+        styles: MAP_STYLE, // 🎨 위에서 만든 지도 스타일 적용 (mapId를 쓰면 무시되므로 mapId는 넣지 않음)
+        mapTypeControl: false,
+        streetViewControl: false,
+      });
+      infoWindow = new InfoWindow();
+
+      // 현재 위치 버튼 (원본 예제 기능)
+      const locationButton = document.createElement("button");
+      locationButton.textContent = "📍 내 위치";
+      locationButton.classList.add("custom-map-control-button");
+      locationButton.addEventListener("click", panToCurrentLocation);
+
+      // 이 지역 다시 검색 버튼
+      const searchButton = document.createElement("button");
+      searchButton.textContent = "🔍 이 지역 식당 찾기";
+      searchButton.classList.add("custom-map-control-button", "primary");
+      searchButton.addEventListener("click", () => searchNearby(map.getCenter()));
+
+      const controlWrap = document.createElement("div");
+      controlWrap.appendChild(locationButton);
+      controlWrap.appendChild(searchButton);
+      map.controls[google.maps.ControlPosition.TOP_CENTER].push(controlWrap);
+
+      // 범례 (어떤 색이 무슨 뜻인지)
+      const legend = document.createElement("div");
+      legend.className = "legend";
+      ["red", "green", "blue"].forEach((key) => {
+        const row = document.createElement("div");
+        row.innerHTML = '<img src="' + GRADES[key].icon + '" alt="">' + GRADES[key].label;
+        legend.appendChild(row);
+      });
+      map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(legend);
+
+      // 보기 필터 버튼에 핀 아이콘 넣기
+      ["red", "green", "blue"].forEach((key) => {
+        const btn = document.getElementById("f-" + key);
+        btn.innerHTML = '<img src="' + GRADES[key].icon + '" alt="">' + btn.textContent;
+      });
+      // 색깔별 모아보기 (하나만 선택)
+      document.querySelectorAll(".fbtn[data-grade]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".fbtn[data-grade]").forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          filterGrade = btn.dataset.grade;
+          render();
+        });
+      });
+      // 영업 중 / 토박이 추천 (켜기·끄기)
+      document.getElementById("f-open").addEventListener("click", (e) => {
+        filterOpen = !filterOpen;
+        e.currentTarget.classList.toggle("active", filterOpen);
+        render();
+      });
+      document.getElementById("f-local").addEventListener("click", (e) => {
+        filterLocal = !filterLocal;
+        e.currentTarget.classList.toggle("active", filterLocal);
+        render();
+      });
+
+      // 카테고리 칩
+      document.querySelectorAll(".chip").forEach((chip) => {
+        chip.addEventListener("click", () => {
+          document.querySelectorAll(".chip").forEach((c) => c.classList.remove("active"));
+          chip.classList.add("active");
+          currentType = chip.dataset.type.split(","); // "a,b,c" → ["a","b","c"]
+          searchNearby(map.getCenter());
+        });
+      });
+
+      searchNearby(map.getCenter());
+    }
+    window.initMap = initMap;
+
+    /* ---------- 현재 위치로 이동 (원본 예제 코드 응용) ---------- */
+    function panToCurrentLocation() {
+      if (!navigator.geolocation) {
+        handleLocationError(false, map.getCenter());
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const pos = { lat: position.coords.latitude, lng: position.coords.longitude };
+          map.setCenter(pos);
+          map.setZoom(16);
+          infoWindow.setPosition(pos);
+          infoWindow.setContent("📍 현재 위치");
+          infoWindow.open(map);
+          searchNearby(pos);
+        },
+        () => handleLocationError(true, map.getCenter())
+      );
+    }
+
+    function handleLocationError(browserHasGeolocation, pos) {
+      infoWindow.setPosition(pos);
+      infoWindow.setContent(
+        browserHasGeolocation
+          ? "위치를 가져오지 못했어요. 브라우저에서 위치 권한을 허용해 주세요."
+          : "이 브라우저는 위치 기능을 지원하지 않아요."
+      );
+      infoWindow.open(map);
+    }
+
+    /* ---------- 주변 식당 검색 (Places API New) ---------- */
+    async function searchNearby(center) {
+      const listTitle = document.getElementById("list-title");
+      const list = document.getElementById("list");
+      listTitle.textContent = "식당을 찾는 중...";
+      list.innerHTML = "";
+      clearMarkers();
+
+      try {
+        const { places } = await PlaceClass.searchNearby({
+          fields: ["id", "displayName", "location", "rating", "userRatingCount",
+                   "formattedAddress", "googleMapsURI",
+                   "regularOpeningHours", "utcOffsetMinutes", "businessStatus"], // 뒤 3개: 영업 중 판단용
+          locationRestriction: { center: center, radius: SEARCH_RADIUS },
+          includedPrimaryTypes: currentType,
+          maxResultCount: 20,
+          rankPreference: "POPULARITY",
+          language: "ko",
+          region: "kr",
+        });
+
+        // 각 식당이 지금 영업 중인지 확인 (true: 영업 중, false: 영업 끝, undefined: 정보 없음)
+        allPlaces = await Promise.all((places || []).map(async (place) => {
+          let openNow;
+          try { openNow = await place.isOpen(); } catch (e) { openNow = undefined; }
+          return { place: place, grade: getGrade(place), openNow: openNow };
+        }));
+        render();
+      } catch (err) {
+        console.error(err);
+        listTitle.textContent = "검색 실패";
+        list.innerHTML = '<div class="empty">식당을 불러오지 못했어요.<br>Places API (New)가 켜져 있는지 확인해 주세요.</div>';
+      }
+    }
+
+    /* ---------- 필터를 적용해서 지도·목록 다시 그리기 ---------- */
+    function render() {
+      const listTitle = document.getElementById("list-title");
+      const list = document.getElementById("list");
+      list.innerHTML = "";
+      clearMarkers();
+
+      if (allPlaces.length === 0) {
+        listTitle.textContent = "검색 결과 0곳";
+        list.innerHTML = '<div class="empty">이 근처에 해당하는 식당이 없어요.<br>지도를 옮기고 다시 검색해 보세요.</div>';
+        return;
+      }
+
+      const shown = allPlaces.filter((p) => {
+        if (filterGrade !== "all" && p.grade !== filterGrade) return false;
+        if (filterOpen && p.openNow !== true) return false;
+        if (filterLocal && !isLocalPick(p.place)) return false;
+        return true;
+      });
+
+      // 제목: 몇 곳 중 몇 곳을 보여주는지
+      const isFiltered = filterGrade !== "all" || filterOpen || filterLocal;
+      listTitle.textContent = isFiltered
+        ? "찾은 " + allPlaces.length + "곳 중 " + shown.length + "곳 보는 중"
+        : "반경 " + (SEARCH_RADIUS / 1000) + "km 안 " + allPlaces.length + "곳 (인기순)";
+
+      if (shown.length === 0) {
+        list.innerHTML = '<div class="empty">조건에 맞는 곳이 없어요.<br>보기 필터를 바꿔 보세요.</div>';
+        return;
+      }
+      shown.forEach((p, i) => addPlace(p, i));
+    }
+
+    function addPlace(p, index) {
+      const place = p.place;
+      const grade = p.grade;
+      const local = isLocalPick(place);
+
+      // 별점 등급에 맞는 색깔 핀 (토박이 추천이면 집 모양 배지 + 조금 크게)
+      const size = local ? 44 : grade === "gray" ? 28 : 38;
+      const iconUrl = local
+        ? pinSvg(GRADES[grade].color, ({ red: CIRCLE, green: (c) => CIRCLE(c) + CHECK_BADGE(c), blue: CHECK_INNER, gray: CIRCLE })[grade](GRADES[grade].color) + HOUSE_BADGE)
+        : GRADES[grade].icon;
+      const marker = new MarkerClass({
+        map: map,
+        position: place.location,
+        title: place.displayName,
+        icon: {
+          url: iconUrl,
+          scaledSize: new google.maps.Size(size, size),
+          anchor: new google.maps.Point(size / 2, size * 0.9), // 핀 끝이 정확한 위치를 가리키게
+        },
+        zIndex: (local ? 10 : 0) + { red: 4, green: 3, blue: 2, gray: 1 }[grade], // 토박이 > 빨강 > 초록 > 파랑
+      });
+      marker.addListener("click", () => selectPlace(p, marker, index));
+      markers.push(marker);
+
+      // 목록 항목
+      const item = document.createElement("div");
+      item.className = "place";
+      item.id = "place-" + index;
+      const rating = place.rating
+        ? '<span class="star">★</span> ' + place.rating + " (" + (place.userRatingCount || 0) + ")"
+        : "평점 없음";
+      item.innerHTML =
+        '<div class="place-name">' + (index + 1) + ". " + escapeHtml(place.displayName) +
+          (local ? '<span class="badge local">🏠 토박이 추천</span>' : "") +
+          (grade !== "gray"
+            ? '<span class="badge ' + grade + '"><img src="' + GRADES[grade].icon + '" alt="">' + GRADES[grade].label + "</span>"
+            : "") +
+        "</div>" +
+        '<div class="place-meta">' + rating + " · " + openText(p.openNow, true) +
+          "<br>" + escapeHtml(place.formattedAddress || "") + "</div>";
+      item.addEventListener("click", () => selectPlace(p, marker, index));
+      document.getElementById("list").appendChild(item);
+    }
+
+    // 영업 상태 글자
+    function openText(openNow, asBadge) {
+      const text = openNow === true ? "영업 중" : openNow === false ? "영업 종료" : "영업시간 정보 없음";
+      if (!asBadge) return text;
+      const cls = openNow === true ? "open" : "closed";
+      return '<span class="badge ' + cls + '" style="margin-left:0">' + text + "</span>";
+    }
+
+    function selectPlace(p, marker, index) {
+      const place = p.place;
+      map.panTo(place.location);
+
+      // 정보창 (버튼을 눌러야 해서 글자 대신 HTML 요소로 만듦)
+      const box = document.createElement("div");
+      box.className = "info";
+      box.innerHTML =
+        "<h3>" + escapeHtml(place.displayName) + "</h3>" +
+        "<p>" + (place.rating ? "★ " + place.rating + " · 리뷰 " + (place.userRatingCount || 0) + "개" : "평점 없음") +
+          " · " + openText(p.openNow, false) + "</p>" +
+        "<p>" + escapeHtml(place.formattedAddress || "") + "</p>" +
+        (place.googleMapsURI ? '<a href="' + place.googleMapsURI + '" target="_blank" rel="noopener">구글 지도에서 보기 →</a><br>' : "");
+
+      // 🏠 토박이 추천 표시/해제 버튼
+      const localBtn = document.createElement("button");
+      localBtn.className = "local-btn";
+      const paint = () => {
+        const on = isLocalPick(place);
+        localBtn.classList.toggle("on", on);
+        localBtn.textContent = on ? "🏠 토박이 추천 ✓ (누르면 해제)" : "🏠 토박이 추천으로 표시";
+      };
+      paint();
+      if (isInCodeList(place)) {
+        localBtn.disabled = true;
+        localBtn.title = "코드의 LOCAL_PICKS 목록에 있는 가게예요";
+      }
+      localBtn.addEventListener("click", () => {
+        toggleSavedLocal(place);
+        render();
+        // 다시 그린 뒤 같은 가게를 찾아 정보창을 다시 열어 줌
+        const again = markers.find((m) => m.getTitle() === place.displayName);
+        if (again) google.maps.event.trigger(again, "click");
+      });
+      box.appendChild(localBtn);
+
+      infoWindow.setContent(box);
+      infoWindow.open({ map: map, anchor: marker });
+
+      document.querySelectorAll(".place").forEach((el) => el.classList.remove("selected"));
+      const item = document.getElementById("place-" + index);
+      if (item) {
+        item.classList.add("selected");
+        item.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }
+
+    function clearMarkers() {
+      markers.forEach((m) => m.setMap(null));
+      markers = [];
+      if (infoWindow) infoWindow.close();
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, (c) =>
+        ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    }
+  </script>
+</body>
+</html>
